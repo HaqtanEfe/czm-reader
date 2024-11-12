@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR ve Barkod Okuyucu</title>
+    <!-- html5-qrcode kütüphanesini ekleyin -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        #qr-reader {
+            width: 300px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #result {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center;">QR ve Barkod Okuyucu</h1>
+    
+    <!-- Kameradan okuyucu için alan -->
+    <div id="qr-reader"></div>
+    <!-- Okunan sonuçların yazdırılacağı input alanı -->
+    <input type="text" id="result" placeholder="Kod buraya gelecek" readonly>
+
+    <script>
+        window.onload = function() {
+            function onScanSuccess(decodedText, decodedResult) {
+                const resultInput = document.getElementById('result');
+                resultInput.value = decodedText;
+
+                // URL olup olmadığını kontrol edin
+                if (decodedText.startsWith("http://") || decodedText.startsWith("https://")) {
+                    // Geçerli bir URL ise o siteye yönlendirin
+                    window.location.href = decodedText;
+                } else {
+                    console.log("Geçerli bir URL değil:", decodedText);
+                }
+            }
+
+            const qrCodeReader = new Html5Qrcode("qr-reader");
+            qrCodeReader.start(
+                { facingMode: "environment" },
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                },
+                onScanSuccess,
+                (errorMessage) => {
+                    console.log(`Hata: ${errorMessage}`);
+                }
+            ).catch((err) => {
+                console.error(`Başlatılamadı: ${err}`);
+            });
+        };
+    </script>
+
+</body>
+</html>
